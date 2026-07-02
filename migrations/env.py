@@ -42,6 +42,7 @@ def do_run_migrations(connection: Connection) -> None:
     connection.execute(
         __import__("sqlalchemy").text(f"CREATE SCHEMA IF NOT EXISTS {SCHEMA}")
     )
+    connection.commit()
     context.configure(
         connection=connection,
         target_metadata=target_metadata,

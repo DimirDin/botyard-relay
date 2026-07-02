@@ -1,0 +1,130 @@
+/* "Скетчбук" (Sketchbook) design language for Krivoy Telefon.
+   Deliberately distinct from any other bot on the platform: paper-notebook
+   background, torn-paper cards, handwritten accent font, marker-bright palette. */
+
+:root {
+  --paper-bg: #ece7da; /* muted beige-gray, not pure white */
+  --ruled-line: #c9c2ad;
+  --ink: #2b2b2b;
+  --marker-pink: #ff2d78;
+  --marker-yellow: #ffd400;
+  --marker-green: #2bd672;
+  --marker-blue: #2196f3;
+  --marker-orange: #ff7a1a;
+  --marker-purple: #9b5de5;
+  --safe-top: env(safe-area-inset-top, 44px);
+  --safe-bottom: env(safe-area-inset-bottom, 16px);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: "Kalam", "Segoe UI", sans-serif;
+  color: var(--ink);
+  background-color: var(--paper-bg);
+  background-image:
+    linear-gradient(var(--ruled-line) 1px, transparent 1px),
+    linear-gradient(90deg, transparent 39px, var(--ruled-line) 40px, transparent 41px);
+  background-size: 100% 28px, 100% 100%;
+  padding-top: var(--safe-top);
+  padding-bottom: var(--safe-bottom);
+}
+
+.handwritten {
+  font-family: "Caveat", "Kalam", cursive;
+}
+
+.app-shell {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+/* Torn-paper card: irregular edges via clip-path instead of border-radius, with a
+   slight random rotation applied inline per-instance via the --tilt CSS var. */
+.torn-card {
+  background: #fffdf7;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+  transform: rotate(var(--tilt, -1deg));
+  clip-path: polygon(
+    1% 3%, 6% 0%, 14% 2%, 22% 0%, 33% 2%, 45% 0%, 58% 2%, 70% 0%, 82% 2%, 92% 0%, 100% 3%,
+    99% 12%, 100% 25%, 98% 38%, 100% 50%, 99% 63%, 100% 76%, 98% 88%, 100% 97%,
+    88% 100%, 76% 98%, 64% 100%, 52% 98%, 40% 100%, 28% 98%, 16% 100%, 8% 98%, 0% 100%,
+    2% 88%, 0% 75%, 2% 62%, 0% 50%, 2% 38%, 0% 25%, 2% 12%
+  );
+}
+
+h1.handwritten,
+h2.handwritten {
+  font-size: 2rem;
+  margin: 0 0 8px;
+  color: var(--marker-pink);
+}
+
+.marker-btn {
+  display: inline-block;
+  font-family: "Kalam", sans-serif;
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: #fff;
+  background: var(--marker-blue);
+  border: none;
+  padding: 12px 24px;
+  cursor: pointer;
+  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.25);
+  transform: rotate(-1deg);
+}
+
+.marker-btn:active {
+  transform: translateY(2px) rotate(-1deg);
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.25);
+}
+
+.color-swatch {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 3px solid #fffdf7;
+  box-shadow: 0 0 0 2px var(--ink);
+  cursor: pointer;
+}
+
+.color-swatch.selected {
+  box-shadow: 0 0 0 3px var(--ink), 0 0 0 6px #fff;
+}
+
+canvas.drawing-canvas {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  background: #ffffff;
+  touch-action: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Stroke-by-stroke reveal animation for finished drawings, used on the finale chain
+   cards: an SVG overlay path animates its stroke-dashoffset over 0.5-1s instead of
+   the image just popping in. */
+@keyframes draw-on {
+  from {
+    stroke-dashoffset: var(--path-length, 1000);
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.reveal-stroke {
+  stroke-dasharray: var(--path-length, 1000);
+  animation: draw-on 0.8s ease-out forwards;
+}
